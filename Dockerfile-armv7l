@@ -1,0 +1,53 @@
+FROM hypriot/rpi-node:latest
+# FROM bkjeholt/node-js-with-tellstick:latest
+
+MAINTAINER Björn Kjeholt <dev@kjeholt.se>
+
+RUN apt-get update && \
+    apt-get install -y vim \
+                       wget \
+                       gcc \
+                       cmake \
+                       build-essential \
+                       libconfuse-dev \
+                       libftdi-dev \
+                       help2man && \
+    apt-get clean 
+
+# Add Telldus repository
+RUN echo "deb-src http://download.telldus.com/debian/ stable main" >> /etc/apt/sources.list.d/telldus.list && \
+    wget http://download.telldus.se/debian/telldus-public.key && \
+    apt-key add telldus-public.key && \
+    rm telldus-public.key
+
+# Install dependencies. Compile and install telldusd
+RUN apt-get update && \
+    apt-get build-dep -y telldus-core && \
+    apt-get --compile source telldus-core && \
+    dpkg --install *.deb
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Bundle app source
+COPY . /usr/src/app
+COPY Configs /etc
+
+# Install app dependencies
+
+RUN \
+    mv package.json package-original.json && \
+    sed 's/TestWrapper/js\/main/g' package-original.json > package.json && \
+    rm -f package-*.json build*.sh run*.sh *.log TestWrapper.js && \
+    rm -rf node_modules nbproject && \
+    chmod 755 Scripts/*.sh && \
+    echo "----------------" && \
+    ls -laR && \
+    echo "----------------" && \
+    cat package.json && \
+    echo "----------------"
+
+RUN npm install
+
+# CMD [ "npm", "start" ]
+CMD Scripts/execute.sh
