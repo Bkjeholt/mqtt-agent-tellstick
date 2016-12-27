@@ -24,11 +24,13 @@ RUN apt-get update && \
                        libconfuse-dev \
                        libftdi-dev \
                        help2man && \
-    apt-get clean && \
-    mkdir -p /usr/src/app && \
+    apt-get clean
+
+RUN mkdir -p /usr/src/app && \
     mkdir -p /usr/src/app/js && \
-    mkdir -p /usr/src/app/script && \
-    npm install mqtt && \
+    mkdir -p /usr/src/app/script
+
+RUN npm install mqtt && \
     npm install jontelldus
 
 # Add Telldus repository
