@@ -1,5 +1,17 @@
+# ************************************************************************
+# Product    : Home information and control
+# Date       : 2016-12-28
+# Copyright  : Copyright (C) 2016 Kjeholt Engineering. All rights reserved.
+# Contact    : dev@kjeholt.se
+# Url        : http://www-dev.kjeholt.se
+# Licence    : ---
+# -------------------------------------------------------------------------
+# File       : mqtt-agent-tellstick/Dockerfile-rpi
+# Version    : 1.0.0
+# Author     : Bjorn Kjeholt
+# *************************************************************************
+ 
 FROM hypriot/rpi-node:latest
-# FROM bkjeholt/node-js-with-tellstick:latest
 
 MAINTAINER Björn Kjeholt <dev@kjeholt.se>
 
@@ -12,7 +24,12 @@ RUN apt-get update && \
                        libconfuse-dev \
                        libftdi-dev \
                        help2man && \
-    apt-get clean 
+    apt-get clean && \
+    mkdir -p /usr/src/app && \
+    mkdir -p /usr/src/app/js && \
+    mkdir -p /usr/src/app/script && \
+    npm install mqtt && \
+    npm install jontelldus
 
 # Add Telldus repository
 RUN echo "deb-src http://download.telldus.com/debian/ stable main" >> /etc/apt/sources.list.d/telldus.list && \
@@ -26,28 +43,27 @@ RUN apt-get update && \
     apt-get --compile source telldus-core && \
     dpkg --install *.deb
 
-RUN mkdir -p /usr/src/app
+# Install app dependencies
 WORKDIR /usr/src/app
 
 # Bundle app source
-COPY . /usr/src/app
+COPY js /usr/src/app/js
+COPY Scripts /usr/src/app/script
 COPY Configs /etc
 
-# Install app dependencies
+RUN chmod 755 /usr/src/app/script/* && \
+    chmod 755 /usr/src/app/*
 
-RUN \
-    mv package.json package-original.json && \
-    sed 's/TestWrapper/js\/main/g' package-original.json > package.json && \
-    rm -f package-*.json build*.sh run*.sh *.log TestWrapper.js && \
-    rm -rf node_modules nbproject && \
-    chmod 755 Scripts/*.sh && \
-    echo "----------------" && \
-    ls -laR && \
-    echo "----------------" && \
-    cat package.json && \
-    echo "----------------"
 
-RUN npm install
+ARG DOCKER_IMAGE_NAME
+ARG DOCKER_IMAGE_TAG
 
-# CMD [ "npm", "start" ]
+ENV DOCKER_BASE_IMAGE_NAME na
+ENV DOCKER_BASE_IMAGE_TAG na
+
+ENV DOCKER_IMAGE_NAME ${DOCKER_IMAGE_NAME:-UnknownName}
+ENV DOCKER_IMAGE_TAG ${DOCKER_IMAGE_TAG:-UnknownRevision}
+
+WORKDIR /usr/src/app
+
 CMD Scripts/execute.sh
