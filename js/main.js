@@ -1,13 +1,13 @@
 /************************************************************************
  Product    : Home information and control
- Date       : 2016-05-25
+ Date       : 2016-11-26
  Copyright  : Copyright (C) 2016 Kjeholt Engineering. All rights reserved.
  Contact    : dev@kjeholt.se
  Url        : http://www-dev.kjeholt.se
  Licence    : ---
  -------------------------------------------------------------------------
  File       : MqttAgentRPi/main.js
- Version    : 0.1.1
+ Version    : 0.2.1
  Author     : Bjorn Kjeholt
  -------------------------------------------------------------------------
  MQTT file structure:
@@ -21,51 +21,7 @@
               
             
  *************************************************************************/
-/*
- 
-var jtelldus = require('jontelldus');
 
-var device = {
-  name: "Utebelysning",
-  model: "selflearning-switch",
-  protocol: "arctech",
-  parameters: {
-    house: 17448710,
-    unit: 1
-  }
-};
-
-jtelldus.getDevices(function (devices) {
-  console.log("Available tellstick devices:", devices);
-});
-
-var value101 = 0;
-var value201 = 0;
-
-setInterval(function() {
-    // Get time of the day
-    var date = new Date();
-    var timeOfTheDay = date.getHours() + (date.getMinutes()/60.0) + 1.0;
-    
-    console.log("Current time=" + timeOfTheDay);
-  
-    if (((timeOfTheDay > 5.5)&&(timeOfTheDay<7.5)) || ((timeOfTheDay>16.0)&&(timeOfTheDay<21.50))) { 
-        if (value201 > 0) {
-            jtelldus.turnOn(201,function(err) { 
-                                    if (err) console.log("TurnOn 201 error", err); });
-            value201 = value - 1;
-        } 
-    } else
-        { 
-            jtelldus.turnOff(201,function(err) 
-                                    { if (err) console.log("TurnOff 201 error", err); });
-//            jtelldus.turnOff(101,function(err) 
-//                                    { if (err) console.log("TurnOff 101 error", err); });
-        }    
-},10000);
-
-return;
-*/
 var agent = require('./Classes/agentBody');
 
 var agentObj = agent.create_AgentBody({ 
@@ -94,7 +50,7 @@ var cnt= 0;
 
 setInterval(function() {
     console.log("Status @ " + cnt + "sec. Mqtt link connected:" + agentObj.ci.mqtt.connected);
-    cnt = cnt + 10;
-},10000);
+    cnt = cnt + 15;
+},15000);
 //abhObj.setup();
 

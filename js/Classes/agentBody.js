@@ -1,13 +1,13 @@
 /************************************************************************
  Product    : Home information and control
- Date       : 2016-08-31
+ Date       : 2016-11-26
  Copyright  : Copyright (C) 2016 Kjeholt Engineering. All rights reserved.
  Contact    : dev@kjeholt.se
  Url        : http://www-dev.kjeholt.se
  Licence    : ---
  ---------------------------------------------------------
  File       : mqtt-agent-ovpn/Classes/agentBody.js
- Version    : 0.1.1
+ Version    : 0.2.1
  Author     : Bjorn Kjeholt
  *************************************************************************/
 

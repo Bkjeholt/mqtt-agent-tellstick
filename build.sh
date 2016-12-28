@@ -6,5 +6,5 @@
 
 # Start the build
 
-../SupportFiles/DockerSupport/build.sh Dockerfile-armv7l bkjeholt
+../SupportFiles/DockerSupport/build.sh Dockerfile bkjeholt
 

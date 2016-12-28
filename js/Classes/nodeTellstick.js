@@ -74,18 +74,18 @@ var nodeTellstick = function (ci) {
     jtelldus.getDevices(function (devices) {
         var i = 0;
     
-        (function turnOffDevice(deviceId) {
-                if (deviceId > 0) {
-                    jtelldus.turnOff(devices[deviceId-1].id, function (error) {
-                            if (!error) {
-                                self.deviceList.push(devices[i]);
-                                console.log('Off sent to device ' + devices[i].id + ' (' + devices[i].name + ')');
-                                
-                                turnOffDevices(deviceId-1);
-                            }
-                    });
-                }
-            })(devices.length);        
+        console.log ("Devices ", devices);
+        
+        for (i=0; i < devices.length; i = i + 1) {
+            self.nodeInfo.push({ admin: { dev_id: i+1,
+                                          dev_name: ("dev-"  + (deviceId) + ""),
+                                          config: devices[i] },
+                                     name: devices[i].name,
+                                     level: 0,
+                                     datatype: "float",
+                                     devicetype: "semistatic" });
+            self.setDeviceData(devices[i].name,0);
+        };
     });
 
     /**
@@ -96,6 +96,8 @@ var nodeTellstick = function (ci) {
      */
     this.publishAdminInfo = function(callback) {
         var utc = Math.floor((new Date())/1000);
+        var nodeId = 0;
+        var nodeName = "";
 			  
 	callback(null,
                  "info/present/" + self.configInfo.agent.name,
@@ -122,6 +124,63 @@ var nodeTellstick = function (ci) {
                                   devicetype: "semistatic",
                                   outvar: 1 }));
 
+        /*
+         * present info about all known nodes/devices
+         */
+        
+        for (nodeId=0; nodeId < self.nodeInfo.length; nodeId = nodeId + 1) {
+            nodeName = "dev-" + nodeId + "";
+            
+            callback(null,
+                     "info/present/" + self.configInfo.agent.name + "/admin/" + nodeName + "",
+                         JSON.stringify({ time: utc,
+                                          date: new Date(),
+                                          name: nodeName,
+                                          rev: "1.0.0",
+                                          type: "AdminInfo" }));
+                                          
+            callback(null,
+                         "info/present/" + self.configInfo.agent.name + "/admin/" + nodeName + "/name",
+                         JSON.stringify({ time: utc,
+                                          date: new Date(),
+                                          name: "name",
+                                          rev:"---",
+                                          datatype: "text",
+                                          devicetype: "semistatic",
+                                          outvar: 1 }));
+            callback(null,"info/present/" + self.configInfo.agent.name + "/admin/" + nodeName + "/config",
+                         JSON.stringify({ time: utc,
+                                          date: new Date(),
+                                          name: "config",
+                                          rev:"---",
+                                          datatype: "text",
+                                          devicetype: "semistatic",
+                                          outvar: 1 }));
+
+            callback(null,
+                     "info/present/" + self.configInfo.agent.name + "/" + self.nodeInfo[nodeId].name + "",
+                         JSON.stringify({ time: utc,
+                                          date: new Date(),
+                                          name: nodeName,
+                                          rev: "1.0.0",
+                                          type: "TellstickDevice" }));
+                                          
+
+            callback(null,
+                         "info/present/" + self.configInfo.agent.name + "/" + self.nodeInfo[nodeId].name + "/level",
+                         JSON.stringify({ time: utc,
+                                          date: new Date(),
+                                          name: "level",
+                                          rev:"---",
+                                          datatype: "int",
+                                          devicetype: "semistatic",
+                                          outvar: 1 }));
+            callback(null,
+                     "data/request/" + self.configInfo.agent.name + "/" + self.nodeInfo[nodeId].name + "/level",
+                     JSON.stringify({ date: new Date() }));
+            
+        }
+        
         callback(null,
                  "data/request/" + self.configInfo.agent.name + "/admin/no_of_devices",
                  JSON.stringify({ date: new Date() }));
@@ -288,6 +347,7 @@ var nodeTellstick = function (ci) {
                 callback(null);
             }
         })(self.nodeInfo.length, 
+           nodeName,
             function(nodePtr) {
                 var accessMethod = "";
                 
@@ -310,6 +370,8 @@ var nodeTellstick = function (ci) {
                             }    
                         })(Math.floor((new Date())/1000),5,2);
                     self.actionQueue.sort(function(a,b) { return a.time - b.time; });
+                } else {
+                    console.log("setDeviceData: Error " + nodeName + " is not known");
                 }
             });
     };
@@ -384,8 +446,8 @@ var nodeTellstick = function (ci) {
         
             self.emptyActionQueue(function(err) {
                     self.ongoingActionScan = 0;
-                    if (!err) {
-                
+                    if (err) {
+                        console.log("Scan and empty action queue error: ", err);
                     } });
             }},1000);
 
