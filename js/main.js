@@ -24,11 +24,15 @@
 
 var agent = require('./Classes/agentBody');
 
-var agentObj = agent.create_AgentBody({ 
-                                    agent: {
-                                            name: process.env.npm_package_name,
-                                            rev:  process.env.npm_package_version },
-                                    mqtt: {
+var configInfo = { agent: {
+                                            name: process.env.DOCKER_CONTAINER_NAME,
+                                            rev:  process.env.DOCKER_IMAGE_TAG,
+                                        docker: {
+                                            image: process.env.DOCKER_IMAGE_NAME,
+                                            image_tag: process.env.DOCKER_IMAGE_TAG,
+                                            container: process.env.DOCKER_CONTAINER_NAME
+                                        } },
+                   mqtt: {
                                             ip_addr: (process.env.MQTT_IP_ADDR !== undefined)? process.env.MQTT_IP_ADDR : process.env.MQTT_PORT_1883_TCP_ADDR,   // "192.168.1.10",
                                             port_no: (process.env.MQTT_PORT_NO !== undefined)? process.env.MQTT_PORT_NO : process.env.MQTT_PORT_1883_TCP_PORT,   // "1883",
                                             user:    (process.env.MQTT_USER !== undefined)? process.env.MQTT_USER : process.env.MQTT_ENV_MQTT_USER,      //"hic_nw",
@@ -42,10 +46,12 @@ var agentObj = agent.create_AgentBody({
                                                     "data/set/" + process.env.npm_package_name + "/#"
                                             ]
                                           },
-                                    node: {
+                   node: {
                                             scan_node_data: 30000,
                                             scan_new_nodes: 300000 }
-                                  });
+                                  };
+                                  
+var agentObj = agent.create(configInfo);
 var cnt= 0;
 
 setInterval(function() {
