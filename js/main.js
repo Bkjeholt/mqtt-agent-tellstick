@@ -23,6 +23,8 @@
  *************************************************************************/
 
 var agent = require('./Classes/agentBody');
+var http = require('./classes/healthCheck.js');
+
 
 var configInfo = { agent: {
                                             name: process.env.DOCKER_CONTAINER_NAME,
@@ -52,6 +54,8 @@ var configInfo = { agent: {
                                   };
                                   
 var agentObj = agent.create(configInfo);
+var healthCheckObj = http.create(configInfo);
+
 var cnt= 0;
 
 setInterval(function() {
