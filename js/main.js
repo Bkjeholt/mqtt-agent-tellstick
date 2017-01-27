@@ -68,7 +68,7 @@ return;
 */
 var agent = require('./Classes/agentBody');
 
-var agentObj = agent.create_AgentBody({ 
+var configInfo = { 
                                     agent: {
                                             name: process.env.npm_package_name,
                                             rev:  process.env.npm_package_version },
@@ -89,7 +89,9 @@ var agentObj = agent.create_AgentBody({
                                     node: {
                                             scan_node_data: 30000,
                                             scan_new_nodes: 300000 }
-                                  });
+                                  };
+
+var agentObj = agent.create(configInfo);
 var cnt= 0;
 
 setInterval(function() {
