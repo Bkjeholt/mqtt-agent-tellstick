@@ -27,18 +27,7 @@ var http = require('./classes/healthCheck.js');
 
 
 var configInfo = { agent: {
-<<<<<<< HEAD
-                                            name: process.env.DOCKER_CONTAINER_NAME,
-                                            rev:  process.env.DOCKER_IMAGE_TAG,
-                                        docker: {
-                                            image: process.env.DOCKER_IMAGE_NAME,
-                                            image_tag: process.env.DOCKER_IMAGE_TAG,
-                                            container: process.env.DOCKER_CONTAINER_NAME
-                                        } },
-                   health_check: {
-                                        port_no: 3000,
-                                        check_functions: [] },
-=======
+
                          name: process.env.DOCKER_CONTAINER_NAME,
                          rev:  process.env.DOCKER_IMAGE_TAG,
                          docker: {
@@ -49,7 +38,6 @@ var configInfo = { agent: {
                    health_check: {
                          port_no: 3000,
                          check_functions: [] },
->>>>>>> origin/0.1.1
                    mqtt: {
                          ip_addr: (process.env.MQTT_IP_ADDR !== undefined)? process.env.MQTT_IP_ADDR : process.env.MQTT_PORT_1883_TCP_ADDR,   // "192.168.1.10",
                          port_no: (process.env.MQTT_PORT_NO !== undefined)? process.env.MQTT_PORT_NO : process.env.MQTT_PORT_1883_TCP_PORT,   // "1883",
