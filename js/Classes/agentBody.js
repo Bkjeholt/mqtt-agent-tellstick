@@ -178,7 +178,7 @@ agentBody = function(ci) {
         }(ci));
         
         (function nodeSetup (ci) {
-            self.nodeClient = nodeClass.create_node(ci); 
+            self.nodeClient = nodeClass.create(ci); 
         })(ci);    
   
     })(this.ci);

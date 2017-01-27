@@ -34,6 +34,9 @@ var configInfo = { agent: {
                                             image_tag: process.env.DOCKER_IMAGE_TAG,
                                             container: process.env.DOCKER_CONTAINER_NAME
                                         } },
+                   health_check: {
+                                        port_no: 3000,
+                                        check_functions: [] },
                    mqtt: {
                                             ip_addr: (process.env.MQTT_IP_ADDR !== undefined)? process.env.MQTT_IP_ADDR : process.env.MQTT_PORT_1883_TCP_ADDR,   // "192.168.1.10",
                                             port_no: (process.env.MQTT_PORT_NO !== undefined)? process.env.MQTT_PORT_NO : process.env.MQTT_PORT_1883_TCP_PORT,   // "1883",

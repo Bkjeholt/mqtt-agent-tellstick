@@ -454,6 +454,6 @@ var nodeTellstick = function (ci) {
 };
 
 // Functions which will be available to external callers
-exports.create_node = function(ci) {
+exports.create = function(ci) {
     return new nodeTellstick(ci);
 };
