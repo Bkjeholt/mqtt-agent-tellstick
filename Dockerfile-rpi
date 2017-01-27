@@ -62,6 +62,13 @@ RUN \
 
 RUN npm install
 
+ARG DOCKER_IMAGE_NAME
+ARG DOCKER_IMAGE_TAG
+
+ENV DOCKER_IMAGE_NAME ${DOCKER_IMAGE_NAME:-UnknownName}
+ENV DOCKER_IMAGE_TAG ${DOCKER_IMAGE_TAG:-UnknownRevision}
+
+
 #-------------------------------------------------------------------
 # Expose port number 3000 to be used for health check status
 #-------------------------------------------------------------------
