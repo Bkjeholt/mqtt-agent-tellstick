@@ -10,7 +10,10 @@
     "keywords": [],
     "licenses": {
         "type": "mit"
-    },
+        },
+    "scripts" : {
+        "start" : "node ./js/main.js"
+        },
     "repository": {
         "type": "git",
         "url": "git://github.com/bkjeholt/mqtt-agent-tellstick.git"
