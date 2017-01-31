@@ -399,7 +399,6 @@ var nodeTellstick = function (ci) {
                 callback(null);
             }
         };
-        
     setInterval(function () {
         if (self.ongoingActionScan === 0) {
             self.ongoingActionScan = Math.floor((new Date())/1000);
@@ -410,6 +409,11 @@ var nodeTellstick = function (ci) {
                         console.log("Scan and empty action queue error: ", err);
                     } });
             }},1000);
+
+    (function setup() {
+	    getDevices();
+        })();
+	
 
 };
 
