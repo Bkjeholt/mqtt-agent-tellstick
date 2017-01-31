@@ -24,10 +24,35 @@
          callback(null,devInfo);
      };
      
-     this.setValue = function(value) {
-         if (value > 0) {
-             td.turnOn(1,function(err) {
-                 });
+     this.setDevData = function(devId,value,noOfRepeats,callback) {
+         if (noOfRepeats > 0) {
+             if (value > 0) {
+                 td.turnOn(devId,function(err) {
+                         if (! err) {
+                             self.setValue(devId,value,noOfRepeats-1,callback);
+                         } else {
+                             callback({error: "Fault during switch on device no=" + devId,
+                                       info: {dev_id: devId,
+                                              dev_value: value,
+                                              repeats: noOfRepeats,
+                                              response: err }});
+                         }
+                     });
+             } else {
+                 td.turnOff(devId,function(err) {
+                         if (! err) {
+                             self.setValue(devId,value,noOfRepeats-1,callback);
+                         } else {
+                             callback({error: "Fault during switch off device no=" + devId,
+                                       info: {dev_id: devId,
+                                              dev_value: value,
+                                              repeats: noOfRepeats,
+                                              response: err }});
+                         }
+                     });
+             }
+         } else {
+             callback(null);
          }
      }
  };
