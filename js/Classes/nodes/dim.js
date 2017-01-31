@@ -29,8 +29,10 @@
                          if (! err) {
                              self.setDevData(value,noOfRepeats-1,callback);
                          } else {
-                             callback({error: "Fault during switch on device no=" + devId,
-                                       info: {dev_id: devId,
+                             callback({error: "Fault during switch on device no=" + self.devInfo.id,
+                                       severity: "warning",
+                                       info: {dev_id: self.devInfo.id,
+                                              dev_info: self.devInfo,
                                               dev_value: value,
                                               repeats: noOfRepeats,
                                               response: err }});
