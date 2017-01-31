@@ -1,13 +1,13 @@
 /************************************************************************
  Product    : Home information and control
- Date       : 2016-11-26
- Copyright  : Copyright (C) 2016 Kjeholt Engineering. All rights reserved.
+ Date       : 2017-01-31
+ Copyright  : Copyright (C) 2016-2107 Kjeholt Engineering. All rights reserved.
  Contact    : dev@kjeholt.se
  Url        : http://www-dev.kjeholt.se
  Licence    : ---
  ---------------------------------------------------------
- File       : mqtt-agent-ovpn/Classes/agentBody.js
- Version    : 0.2.1
+ File       : mqtt-agent-tellstick/js/Classes/agentBody.js
+ Version    : 0.3.1
  Author     : Bjorn Kjeholt
  *************************************************************************/
 
@@ -160,9 +160,31 @@ agentBody = function(ci) {
         var i;
         var fileNameArray;
 
-        self.nodeClient.publishAdminInfo(function(err,topicStr,msgStr) {
+        self.nodeClient.publishAdminInfo(function(err,msgType,topicJson,msgJson) {
+            var utc = Math.floor((new Date())/1000);
+            var topicStr = "";
+            var msgStr = "";
+            var notDefinedMsgType = false;
+         
             if (!err) {
-                self.mqttClient.publish(topicStr,msgStr,{ qos: 0, retain: 1 });
+                switch (msgType) {
+                 case "set_node_info" :
+                     topicStr = JSON.stringify(topicJson);
+                     msgStr = JSON.stringify({});
+                     break;
+                 case "set_device_info" :
+                     break;
+                 case "set_variable_info" :
+                     break;
+                 case "set_device_data" :
+                     break;
+                 default :
+                     notDefinedMsgType = true;
+                     break;
+                }
+                if (! notDefinedMsgType) {
+                    self.mqttClient.publish(topicStr,msgStr,{ qos: 0, retain: 1 });
+                }
             }
         });
     };
