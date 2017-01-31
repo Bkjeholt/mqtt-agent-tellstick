@@ -13,7 +13,7 @@
  
  *************************************************************************/
 
-var jtelldus = require('jontelldus');
+var telldus = require('telldus');
 
 var dimDev = require('nodes/dim');
 var switchDev = require('nodes/switch');
@@ -31,7 +31,7 @@ var nodeTellstick = function (ci) {
     this.deviceList = [];
 
     var getDevices = function() {
-        jtelldus.getDevices(function (devices) {
+        telldus.getDevices(function (devices) {
             var i = 0;
     
             console.log ("Devices ", devices);
@@ -40,7 +40,7 @@ var nodeTellstick = function (ci) {
 		switch(devices[i].model) {
 		    default:
 			self.deviceList.push({ name: devices[i].name,
-					       object: switchDev.create(jtelldus,devices[i])});
+					       object: switchDev.create(telldus,devices[i])});
 			break;
 		}
             };
