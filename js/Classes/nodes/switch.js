@@ -13,10 +13,9 @@
 
  *************************************************************************/
  
- var switch = function(tdAccess,deviceInfo,configInfo) {
+ var switch = function(tdAccess,deviceInfo) {
      var td = tdAccess;
      var devInfo = deviceInfo;
-     var ci = configInfo;
      
      var self = this;
      
@@ -24,27 +23,29 @@
          callback(null,devInfo);
      };
      
-     this.setDevData = function(devId,value,noOfRepeats,callback) {
+     this.setDevData = function(value,noOfRepeats,callback) {
          if (noOfRepeats > 0) {
              if (value > 0) {
-                 td.turnOn(devId,function(err) {
+                 td.turnOn(self.devInfo.id,function(err) {
                          if (! err) {
-                             self.setValue(devId,value,noOfRepeats-1,callback);
+                             self.setDevData(value,noOfRepeats-1,callback);
                          } else {
-                             callback({error: "Fault during switch on device no=" + devId,
-                                       info: {dev_id: devId,
+                             callback({error: "Fault during switch on device no=" + self.devInfo.id,
+                                       info: {dev_id: self.devInfo.id,
+                                              dev_info: self.devInfo,
                                               dev_value: value,
                                               repeats: noOfRepeats,
                                               response: err }});
                          }
                      });
              } else {
-                 td.turnOff(devId,function(err) {
+                 td.turnOff(self.devInfo.id,function(err) {
                          if (! err) {
-                             self.setValue(devId,value,noOfRepeats-1,callback);
+                             self.setDevData(value,noOfRepeats-1,callback);
                          } else {
-                             callback({error: "Fault during switch off device no=" + devId,
-                                       info: {dev_id: devId,
+                             callback({error: "Fault during switch off device no=" + self.devInfo.id,
+                                       info: {dev_id: self.devInfo.id,
+                                              dev_info: self.devInfo,
                                               dev_value: value,
                                               repeats: noOfRepeats,
                                               response: err }});
