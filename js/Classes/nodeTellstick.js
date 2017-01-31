@@ -58,14 +58,18 @@ var nodeTellstick = function (ci) {
         var utc = Math.floor((new Date())/1000);
         var nodeId = 0;
         var nodeName = "";
-			  
-	callback(null,
-                 "info/present/" + self.configInfo.agent.name,
-                 JSON.stringify({  time: utc,
-                                   date: new Date(),
-                                   name: self.configInfo.agent.name,
-                                   rev:  self.configInfo.agent.ver }));
-			
+	var i;
+	
+        for (i=0; i < self.deviceList.length; i=i+1) {
+            self.deviceList[i].object.getMqttMessages(function(err,topicJson,msgJson) {
+                    if (!err) {
+                        callback(null,topicJson,msgJson);
+                    } else {
+                        
+                    }
+            });
+        }
+        
         callback(null,
                  "info/present/" + self.configInfo.agent.name + "/admin",
                  JSON.stringify({ time: utc,

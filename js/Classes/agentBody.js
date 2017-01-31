@@ -157,34 +157,40 @@ agentBody = function(ci) {
 
     this.publishInfo = function () {
         var utc = Math.floor((new Date())/1000);
-        var i;
-        var fileNameArray;
-
-        self.nodeClient.publishAdminInfo(function(err,msgType,topicJson,msgJson) {
-            var utc = Math.floor((new Date())/1000);
+        
+        var topicHeaderStr = "info/present/" + self.ci.agent.name;
+        
+        self.mqttClient.publish( topicHeaderStr,
+                                 JSON.stringify({
+                                        time: Math.floor((new Date())/1000),
+                                        date: new Date(),
+                                        name: self.ci.agent.name,
+                                        rev: self.ci.agent.rev }),
+                                 { qos: 0, retain: 1 });
+                                
+        self.nodeClient.publishAdminInfo(function(err,topicJson,msgJson) {
             var topicStr = "";
             var msgStr = "";
-            var notDefinedMsgType = false;
          
             if (!err) {
-                switch (msgType) {
-                 case "set_node_info" :
-                     topicStr = JSON.stringify(topicJson);
-                     msgStr = JSON.stringify({});
-                     break;
-                 case "set_device_info" :
-                     break;
-                 case "set_variable_info" :
-                     break;
-                 case "set_device_data" :
-                     break;
-                 default :
-                     notDefinedMsgType = true;
-                     break;
-                }
-                if (! notDefinedMsgType) {
+                if (topicJson.node !== undefined) {
+                    topicStr = topicHeaderStr + "/" + topicJson.node;
+                    msgStr = JSON.stringify(msgJson);
+                    
+                    if (topicJson.device !== undefined) {
+                        topicStr = topicStr + "/" + topicJson.device;
+                    
+                        if (topicJson.variable !== undefined) {
+                            // Create a variable message
+                            topicStr = topicStr + "/" + topicJson.variable;
+                    
+                        }
+                    }
+                                        
                     self.mqttClient.publish(topicStr,msgStr,{ qos: 0, retain: 1 });
                 }
+            } else {
+                console.log("AgentBody: Error from publishAdminInfo. err=",err);
             }
         });
     };
