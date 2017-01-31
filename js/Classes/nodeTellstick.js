@@ -1,63 +1,22 @@
 /************************************************************************
  Product    : Home information and control
- Date       : 2016-11-18
- Copyright  : Copyright (C) 2016 Kjeholt Engineering. All rights reserved.
+ Date       : 2017-01-31
+ Copyright  : Copyright (C) 2016-2017 Kjeholt Engineering. All rights reserved.
  Contact    : dev@kjeholt.se
  Url        : http://www-dev.kjeholt.se
  Licence    : ---
  ---------------------------------------------------------
  File       : mqtt-agent-ovpn/nodeTellstick.js
- Version    : 0.2.1
+ Version    : 0.3.1
  Author     : Bjorn Kjeholt
  ---------------------------------------------------------
- Data struct: [
-		 {name: ”Utebelysning”,
-		  devices: [
-			{ name: ”id”,
-			  dat: ”int”,
-			  det: ”semistatic”,
-			  value: ”” },
-			{ name: ”protocol”,
-			  dat: ”text”,
-			  det: ”semistatic”,
-			  value: ”” },
-			{ name: ”model”,
-			  dat: ”text”,
-			  det: ”semistatic”,
-			  value: ”” },
-			{ name: ”type”,
-			  dat: ”text”,
-			  det: ”semistatic”,
-			  value: ”” }
-			    ]}
-	       ]
-{ id: 201,
-    name: 'Nexa: Utebelysning',
-    protocol: 'arctech',
-    model: 'selflearning-switch:nexa',
-    type: 'Device',
-    parameters: { house: '17448710', unit: '1' },
-    methods: [ 'TurnOff', 'TurnOn' ] }
-		
- NodeInfo data structure:		
-    [{ admin: { dev_name: "Dev-1",
-                name: "Utebelysning",
-		config: { id: 1,
-                          name: 'Nexa: Utebelysning',
-                          protocol: 'arctech',
-                          model: 'selflearning-switch:nexa',
-                          type: 'Device',
-                          parameters: { house: '17448710', unit: '1' },
-                          methods: [ 'TurnOff', 'TurnOn' ]},
-                          datatype: "float",
-                          devicetype: "semistatic" },
-                name: "Utebelysning",
-                level: "0.0" }]
-
+ 
  *************************************************************************/
 
 var jtelldus = require('jontelldus');
 
+var dimDev = require('nodes/dim');
+var switchDev = require('nodes/switch');
 
 var nodeTellstick = function (ci) {
     var self = this;
@@ -71,22 +30,23 @@ var nodeTellstick = function (ci) {
     
     this.deviceList = [];
 
-    jtelldus.getDevices(function (devices) {
-        var i = 0;
+    var getDevices = function() {
+        jtelldus.getDevices(function (devices) {
+            var i = 0;
     
-        console.log ("Devices ", devices);
+            console.log ("Devices ", devices);
         
-        for (i=0; i < devices.length; i = i + 1) {
-            self.nodeInfo.push({ admin: { dev_id: i+1,
-                                          dev_name: ("dev-"  + (deviceId) + ""),
-                                          config: devices[i] },
-                                     name: devices[i].name,
-                                     level: 0,
-                                     datatype: "float",
-                                     devicetype: "semistatic" });
-            self.setDeviceData(devices[i].name,0);
-        };
-    });
+            for (i=0; i < devices.length; i = i + 1) {
+		switch(devices[i].model) {
+		    default:
+			self.deviceList.push({ name: devices[i].name,
+					       object: switchDev.create(jtelldus,devices[i])});
+			break;
+		}
+            };
+        });
+    };
+	
 
     /**
      * @function publishAdminInfo
