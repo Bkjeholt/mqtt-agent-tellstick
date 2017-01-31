@@ -16,7 +16,8 @@
 exports.generateMqttInfoMessages = function(devInfo, callback) {
     var utc = Math.floor((new Date())/1000);
     callback( null,
-              { node: devInfo.name },
+              { order: "info_present",
+                node: devInfo.name },
               { time: utc,
                 date: new Date(),
                 name: self.devInfo.name,
@@ -24,7 +25,8 @@ exports.generateMqttInfoMessages = function(devInfo, callback) {
                 type: "TellstickDevice" } );
                                           
     callback( null,
-              { node: devInfo.name,
+              { order: "info_present",
+                node: devInfo.name,
                 device: "level" },
               { time: utc,
                 date: new Date(),
@@ -35,7 +37,8 @@ exports.generateMqttInfoMessages = function(devInfo, callback) {
                 outvar: 1 } );
 
     callback( null,
-              { node: devInfo.name,
+              { order: "info_present",
+                node: devInfo.name,
                 device: "config"},
               { time: utc,
                 date: new Date(),
@@ -45,13 +48,21 @@ exports.generateMqttInfoMessages = function(devInfo, callback) {
                 devicetype: "static",
                 outvar: 1 } );
 
+    callback( null,
+              { order: "data_request",
+                node: devInfo.name,
+                device: "config"},
+              { time: utc,
+                date: new Date() } );
+
 };
 
 exports.generateMqttDataMessages = function(devInfo, devData, callback) {
     var utc = Math.floor((new Date())/1000);
                
     callback( null,
-              { node: devInfo.name,
+              { order: "data_request",
+                node: devInfo.name,
                 device: "config" },
               { time: utc,
                 date: new Date(),

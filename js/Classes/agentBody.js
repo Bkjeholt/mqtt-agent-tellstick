@@ -158,9 +158,10 @@ agentBody = function(ci) {
     this.publishInfo = function () {
         var utc = Math.floor((new Date())/1000);
         
-        var topicHeaderStr = "info/present/" + self.ci.agent.name;
+        var topicHeaderStr = { info_present: "info/present/" + self.ci.agent.name,
+                               data_request: "data/request/" + self.ci.agent.name };
         
-        self.mqttClient.publish( topicHeaderStr,
+        self.mqttClient.publish( topicHeaderStr.info_present,
                                  JSON.stringify({
                                         time: Math.floor((new Date())/1000),
                                         date: new Date(),
@@ -171,10 +172,15 @@ agentBody = function(ci) {
         self.nodeClient.publishAdminInfo(function(err,topicJson,msgJson) {
             var topicStr = "";
             var msgStr = "";
-         
+            
+            if (topicJson === "info_present")
+                topicStr = topicHeaderStr.info_present;
+            else
+                topicStr = topicHeaderStr.data_request;
+                
             if (!err) {
                 if (topicJson.node !== undefined) {
-                    topicStr = topicHeaderStr + "/" + topicJson.node;
+                    topicStr = topicStr + "/" + topicJson.node;
                     msgStr = JSON.stringify(msgJson);
                     
                     if (topicJson.device !== undefined) {
