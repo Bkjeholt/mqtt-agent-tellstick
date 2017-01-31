@@ -13,6 +13,8 @@
 
  *************************************************************************/
  
+vat nodeBasics = require('./basics');
+
  var switch = function(tdAccess,deviceInfo) {
      var td = tdAccess;
      var devInfo = deviceInfo;
@@ -60,60 +62,10 @@
          }
      }
      
-     this.getMqttInfo = function() {
-         var utc = Math.floor((new Date())/1000);
-         callback(null,
-                  "set_node_info",
-                  {       // topic
-                      node: self.devInfo.name
-                  },
-                  {       // message
-                      time: utc,
-                      date: new Date(),
-                      name: self.devInfo.name,
-                      rev: "1.0.0",
-                      type: "TellstickDevice" }));
-                                          
-         callback(null,
-                  "set_device_info",
-                  {       // topic
-                      node: self.devInfo.name,
-                      device: "level"
-                  },
-                  {       // message 
-                      time: utc,
-                      date: new Date(),
-                      name: "level",
-                      rev:"---",
-                      datatype: "int",
-                      devicetype: "semistatic",
-                      outvar: 1 }));
-
-         callback(null,
-                  "set_variable_info",
-                  {       // topic
-                      node: self.devInfo.name,
-                      device: "config",
-                      variable: "json"
-                  },
-                  {       // message 
-                      time: utc,
-                      date: new Date(),
-                      name: "json",
-                      rev:"---",
-                      datatype: "text",
-                      devicetype: "static",
-                      outvar: 1 }));
-
-         callback(null,
-                  "set_variable_data",
-                  { node: self.devInfo.name,
-                    device: "config",
-                    variable: "json" },
-                  { time: utc,
-                    date: new Date(),
-                    data: JSON.stringify(self.devInfo) }));
-
+     this.getMqttMessages = function(callback) {
+         nodeBasics.generateMqttInfoMessages(self.devInfo,callback);
+         nodeBasics.generateMqttDataMessages(self.devInfo, callback);
+      
      }
  };
  
