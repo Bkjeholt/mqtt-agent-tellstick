@@ -15,8 +15,8 @@
 
 var telldus = require('telldus');
 
-var dimDev = require('nodes/dim');
-var switchDev = require('nodes/switch');
+var dimDev = require('./nodes/dim');
+var switchDev = require('./nodes/switch');
 
 var nodeTellstick = function (ci) {
     var self = this;
