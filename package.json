@@ -2,11 +2,17 @@
     "name": "mqtt-agent-tellstick",
     "description": "",
     "version": "0.0.1",
-    "main": "./mqtt-agent-tellstick.js",
+    "main": "./js/main.js",
     "author": {
         "name": "Björn Kjeholt",
         "email": "dev@kjeholt.se"
     },
+    "contributors" : [ ],
+    "dependencies" : {
+        "mqtt" : "1.7.3",
+        "telldus" : "1.1.2",
+        "node-gyp" : "3.5.0"
+  },
     "keywords": [],
     "licenses": {
         "type": "mit"

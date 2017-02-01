@@ -9,8 +9,8 @@ ARCHITECTURE=rpi
 echo "------------------------------------------------------------------------"
 echo "-- Run image:       $DOCKER_IMAGE_NAME:latest "
 
-# DOCKER_IMAGE=${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_BASE_TAG}-${ARCHITECTURE}
-DOCKER_IMAGE=${DOCKER_IMAGE_NAME}:dev-${ARCHITECTURE}
+DOCKER_IMAGE=${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_BASE_TAG}-${ARCHITECTURE}
+# DOCKER_IMAGE=${DOCKER_IMAGE_NAME}:dev-${ARCHITECTURE}
 
 echo "------------------------------------------------------------------------"
 echo "-- Remove docker container if it exists"
