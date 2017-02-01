@@ -13,7 +13,7 @@
 
  *************************************************************************/
  
- var dim = function(tdAccess,deviceInfo) {
+ var dimDev = function(tdAccess,deviceInfo) {
      var td = tdAccess;
      var devInfo = deviceInfo;
      
@@ -45,5 +45,5 @@
  };
  
  exports.create = function(tdAccess,deviceInfo) {
-    return new switch(tdAccess,deviceInfo);
+    return new dimDev(tdAccess,deviceInfo);
 };

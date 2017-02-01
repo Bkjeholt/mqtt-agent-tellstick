@@ -13,22 +13,26 @@
 
  *************************************************************************/
  
-vat nodeBasics = require('./basics');
+var nodeBasics = require('./basics');
 
- var switch = function(tdAccess,deviceInfo) {
-     var td = tdAccess;
-     var devInfo = deviceInfo;
+var switchDev = function(tdAccess,deviceInfo) {
+    var td = tdAccess;
+    var devInfo = deviceInfo;
      
-     var self = this;
+    var self = this;
      
-     this.getDevInfo = function (callback) {
-         callback(null,devInfo);
-     };
-     
-   /**
-    ** @function
-    **/
-     this.setDevData = function(value,noOfRepeats,callback) {
+    this.getDevInfo = function (callback) {
+        callback(null,devInfo);
+    };
+
+    /**
+     * 
+     * @param {int} value
+     * @param {int} noOfRepeats
+     * @param {function} callback
+     * @returns {undefined}
+     */
+    this.setDevData = function(value,noOfRepeats,callback) {
          if (noOfRepeats > 0) {
              if (value > 0) {
                  td.turnOn(self.devInfo.id,function(err) {
@@ -60,15 +64,15 @@ vat nodeBasics = require('./basics');
          } else {
              callback(null);
          }
-     }
+    };
      
-     this.getMqttMessages = function(callback) {
+    this.getMqttMessages = function(callback) {
          nodeBasics.generateMqttInfoMessages(self.devInfo,callback);
          nodeBasics.generateMqttDataMessages(self.devInfo, callback);
       
-     }
+     };
  };
  
  exports.create = function(tdAccess,deviceInfo) {
-    return new switch(tdAccess,deviceInfo);
+    return new switchDev(tdAccess,deviceInfo);
 };
