@@ -44,3 +44,6 @@ exports.topicStrToJson = function (str, callback) {
         }
     };
     
+exports.mqttPublish = function(mqttObj, nodeObj) {
+   
+};
