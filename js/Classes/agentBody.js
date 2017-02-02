@@ -12,6 +12,7 @@
  *************************************************************************/
 
 var mqtt = require('mqtt');
+var mqttBasics = require('./support/mqttBasics');
 var nodeClass = require('./nodeTellstick');
 var fs = require('fs');
 
@@ -27,35 +28,80 @@ agentBody = function(ci) {
     
     console.log("MQTT connect :");
 
-    this.topicStrToJson = function (str) {
-        var t = str.split("/");
-        var result = {group: t[0],
-                       order: t[1],
-                       agent: '---',
-                       node: '---',
-                       device: '---',
-                       variable: '---' };
-        
-        if (t[2] !== undefined) { 
-            result.agent = t[2];
-        
-            if (t[3] !== undefined) {
-                result.node = t[3];
-        
-                if (t[4] !== undefined) { 
-                    result.device = t[4];
-        
-                    if (t[5] !== undefined) 
-                        result.variable = t[5];
+
+    this.mqttSubscribedMessage = function(topicStr, messageStr, packet) {
+        var topic;
+        var payload = ;
+        var currTime = Math.floor((new Date())/1000);
+        var fileNameArray;
+        var i;
+        var fd;
+        var certBuffer;
+
+        mqttBasics.topicStrToJson(topicStr, function(topicJson) {
+                var msgJson = JSON.parse(messageStr);
+                switch (topicJson.group + "/" + topicJson.order) {
+                    case 'data/set' :
+                        if (msgJson.data !== undefined) {
+                            nodeClient.setDeviceData(topicJson.node,msgJson.data);
+                        } else {
+                            // Error mal-formatted message
+                        }
+                        break;
+                  
+                    default :
+                        break;
                 }
-            }
-        }
-        
-        return result;
+            });
     };
-    
-  
-    this.mqttSubscribe = function() {
+ 
+    this.publishInfo = function () {
+        var utc = Math.floor((new Date())/1000);
+        
+        var topicHeaderStr = { info_present: "info/present/" + self.ci.agent.name,
+                               data_request: "data/request/" + self.ci.agent.name };
+        
+        self.mqttClient.publish( topicHeaderStr.info_present,
+                                 JSON.stringify({
+                                        time: Math.floor((new Date())/1000),
+                                        date: new Date(),
+                                        name: self.ci.agent.name,
+                                        rev: self.ci.agent.rev }),
+                                 { qos: 0, retain: 1 });
+                                
+        self.nodeClient.getNodeInfo(null,function(err,topicJson,msgJson) {
+            var topicStr = "";
+            var msgStr = "";
+            
+            if (topicJson.order === "info_present")
+                topicStr = topicHeaderStr.info_present;
+            else
+                topicStr = topicHeaderStr.data_request;
+                
+            if (!err) {
+                if (topicJson.node !== undefined) {
+                    topicStr = topicStr + "/" + topicJson.node;
+                    msgStr = JSON.stringify(msgJson);
+                    
+                    if (topicJson.device !== undefined) {
+                        topicStr = topicStr + "/" + topicJson.device;
+                    
+                        if (topicJson.variable !== undefined) {
+                            // Create a variable message
+                            topicStr = topicStr + "/" + topicJson.variable;
+                    
+                        }
+                    }
+                                        
+                    self.mqttClient.publish(topicStr,msgStr,{ qos: 0, retain: 1 });
+                }
+            } else {
+                console.log("AgentBody: Error from getNodeInfo. err=",err);
+            }
+        });
+    };
+
+     this.mqttSubscribe = function() {
         var i = 0;
         
         for (i=0; i < self.ci.mqtt.subscriptions.length; i=i+1) {
@@ -81,124 +127,6 @@ agentBody = function(ci) {
         self.mqttConnected = false;
         self.ci.mqtt.connected = false;
         console.log("MQTT Error = ",error);
-    };
-    
-
-    this.mqttSubscribedMessage = function(topicStr, messageStr, packet) {
-        var topic = self.topicStrToJson(topicStr);
-        var payload = JSON.parse(messageStr);
-        var currTime = Math.floor((new Date())/1000);
-        var fileNameArray;
-        var i;
-        var fd;
-        var certBuffer;
-
-        switch (topic.group + "/" + topic.order) {
-            case 'data/set':
-                if (topic.node === 'admin') {
-                    switch (topic.device) {
-                        case 'no_of_devices':
-                            /*
-                             * topic: data/set/"Agent_name"/admin/no_of_devices
-                             */
-                                
-                            self.nodeClient.requestAdminDeviceInfo(payload.data, 
-                                                                       function(err,topicStr, msgStr) {
-                                            if (!err) {
-                                                self.mqttClient.publish(topicStr,msgStr, { qos:0, retain: 1 });
-                                            } else {
-                                                console.log("Error");
-                                            }
-                                        });
-                            break;
-                        default:
-                            switch (topic.variable) {
-                                case 'config':
-                                    self.nodeClient.setDeviceConfig(topic.device,payload.data);
-                                    break;
-                                case 'name':
-                                    self.nodeClient.setDeviceName(topic.device,payload.data);
-                                    break;
-                                default:
-                                    break;
-                            };
-                            break;
-                        }
-                    
-                } else {
-                    
-                }
-                switch (topic.node) {
-                    case 'admin':
-                        break;
-                    default:
-                        switch (topic.device) {
-                            case 'config' :
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                }
-                break;
-            default:
-                break;
-        };
-      
-        self.nodeClient.getDeviceData(wanIPaddr, function(err,devData) {
-            if (!err) {
-                self.mqttClient.publish("data/present/"+self.ci.agent.name+"/"+devData.node+"/"+devData.device,
-                                        { time: Math.floor((new Date())/1000),
-                                          date: new Date(),
-                                          data: devData.value });
-            }
-        });        
-    };
-
-    this.publishInfo = function () {
-        var utc = Math.floor((new Date())/1000);
-        
-        var topicHeaderStr = { info_present: "info/present/" + self.ci.agent.name,
-                               data_request: "data/request/" + self.ci.agent.name };
-        
-        self.mqttClient.publish( topicHeaderStr.info_present,
-                                 JSON.stringify({
-                                        time: Math.floor((new Date())/1000),
-                                        date: new Date(),
-                                        name: self.ci.agent.name,
-                                        rev: self.ci.agent.rev }),
-                                 { qos: 0, retain: 1 });
-                                
-        self.nodeClient.publishAdminInfo(function(err,topicJson,msgJson) {
-            var topicStr = "";
-            var msgStr = "";
-            
-            if (topicJson === "info_present")
-                topicStr = topicHeaderStr.info_present;
-            else
-                topicStr = topicHeaderStr.data_request;
-                
-            if (!err) {
-                if (topicJson.node !== undefined) {
-                    topicStr = topicStr + "/" + topicJson.node;
-                    msgStr = JSON.stringify(msgJson);
-                    
-                    if (topicJson.device !== undefined) {
-                        topicStr = topicStr + "/" + topicJson.device;
-                    
-                        if (topicJson.variable !== undefined) {
-                            // Create a variable message
-                            topicStr = topicStr + "/" + topicJson.variable;
-                    
-                        }
-                    }
-                                        
-                    self.mqttClient.publish(topicStr,msgStr,{ qos: 0, retain: 1 });
-                }
-            } else {
-                console.log("AgentBody: Error from publishAdminInfo. err=",err);
-            }
-        });
     };
     
     (function setup (ci) {
