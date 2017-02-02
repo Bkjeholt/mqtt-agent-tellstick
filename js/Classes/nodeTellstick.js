@@ -49,17 +49,16 @@ var nodeTellstick = function (ci) {
 	
 
     /**
-     * @function publishAdminInfo
+     * @function getNodeInfo
      * 
+     * @param {string} nodeName
      * @param {function} callback
      * @returns {undefined}
      */
-    this.publishAdminInfo = function(callback) {
-        var utc = Math.floor((new Date())/1000);
+    this.getNodeInfo = function(nodeName,callback) {
         var nodeId = 0;
-        var nodeName = "";
 	var i;
-	
+	    
         for (i=0; i < self.deviceList.length; i=i+1) {
             self.deviceList[i].object.getMqttMessages(function(err,topicJson,msgJson) {
                     if (!err) {
@@ -69,10 +68,6 @@ var nodeTellstick = function (ci) {
                     }
             });
         }
-    };
-
-    this.publishInfo = function(deviceNameStr,callback) {
-        
     };
 
     this.getDeviceData = function (callback) {
