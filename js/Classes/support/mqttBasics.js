@@ -38,7 +38,7 @@ exports.topicStrToJson = function (str, callback) {
                     }
                 }
             }
-            callback(result);
+            callback(null,result);
         } else {
             // The topic doesn't contain the required 'group' and 'order' field, skip it!
         }
