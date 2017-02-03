@@ -30,15 +30,14 @@ agentBody = function(ci) {
 
 
     this.mqttSubscribedMessage = function(topicStr, messageStr, packet) {
-        var topic;
-        var payload = ;
-        var currTime = Math.floor((new Date())/1000);
-        var fileNameArray;
-        var i;
-        var fd;
-        var certBuffer;
+//        var topic;
+//        var currTime = Math.floor((new Date())/1000);
+//        var fileNameArray;
+//        var i;
+//        var fd;
+//        var certBuffer;
 
-        mqttBasics.topicStrToJson(topicStr, function(topicJson) {
+        mqttBasics.topicStrToJson(topicStr, function(err,topicJson) {
                 var msgJson = JSON.parse(messageStr);
                 switch (topicJson.group + "/" + topicJson.order) {
                     case 'data/set' :
