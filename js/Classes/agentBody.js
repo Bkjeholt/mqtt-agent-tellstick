@@ -24,6 +24,7 @@ agentBody = function(ci) {
     this.mqttConnected = false;
     this.gateWayReady = false;
     
+    this.nodeClient = null;
 //    this.nodeClient = nodeClass.create_nodeTellstick(ci);
     
     console.log("MQTT connect :");
@@ -42,7 +43,7 @@ agentBody = function(ci) {
                 switch (topicJson.group + "/" + topicJson.order) {
                     case 'data/set' :
                         if (msgJson.data !== undefined) {
-                            nodeClient.setDeviceData(topicJson.node,msgJson.data);
+                            self.nodeClient.setDeviceData(topicJson.node,msgJson.data);
                         } else {
                             // Error mal-formatted message
                         }
@@ -57,10 +58,7 @@ agentBody = function(ci) {
     this.publishInfo = function () {
         var utc = Math.floor((new Date())/1000);
         
-        var topicHeaderStr = { info_present: "info/present/" + self.ci.agent.name,
-                               data_request: "data/request/" + self.ci.agent.name };
-        
-        self.mqttClient.publish( topicHeaderStr.info_present,
+        self.mqttClient.publish( "info/present/" + self.ci.agent.name,
                                  JSON.stringify({
                                         time: Math.floor((new Date())/1000),
                                         date: new Date(),
@@ -69,16 +67,12 @@ agentBody = function(ci) {
                                  { qos: 0, retain: 1 });
                                 
         self.nodeClient.getNodeInfo(null,function(err,topicJson,msgJson) {
-            var topicStr = "";
-            var msgStr = "";
+                var topicStr = (topicJson.order === "info_present")?
+                                        "info/present/" + self.ci.agent.name :
+                                        "data/request/" + self.ci.agent.name;
+                var msgStr = "";
             
-            if (topicJson.order === "info_present")
-                topicStr = topicHeaderStr.info_present;
-            else
-                topicStr = topicHeaderStr.data_request;
-                
-            if (!err) {
-                if (topicJson.node !== undefined) {
+                if ((!err) && (topicJson.order !== undefined) && (topicJson.node !== undefined)) {
                     topicStr = topicStr + "/" + topicJson.node;
                     msgStr = JSON.stringify(msgJson);
                     
@@ -93,11 +87,14 @@ agentBody = function(ci) {
                     }
                                         
                     self.mqttClient.publish(topicStr,msgStr,{ qos: 0, retain: 1 });
+                } else {
+                    console.log("AgentBody: Error from getNodeInfo. error info=",
+                                                  { err: err,
+                                                    topic_json: topicJson,
+                                                    topic_str: topicStr,
+                                                    msg_json: msgJson});
                 }
-            } else {
-                console.log("AgentBody: Error from getNodeInfo. err=",err);
-            }
-        });
+            });
     };
 
      this.mqttSubscribe = function() {
