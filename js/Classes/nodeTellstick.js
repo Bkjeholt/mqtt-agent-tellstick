@@ -31,19 +31,21 @@ var nodeTellstick = function (ci) {
     this.deviceList = [];
 
     var getDevices = function() {
-        telldus.getDevices(function (devices) {
+        telldus.getDevices(function (err,devices) {
             var i = 0;
     
-            console.log ("Devices ", devices);
+            if (! err) {
+                console.log ("Devices ", devices);
         
-            for (i=0; i < devices.length; i = i + 1) {
-		switch(devices[i].model) {
-		    default:
-			self.deviceList.push({ name: devices[i].name,
-					       object: switchDev.create(telldus,devices[i])});
-			break;
-		}
-            };
+                for (i=0; i < devices.length; i = i + 1) {
+                    switch(devices[i].model) {
+                        default:
+                            self.deviceList.push({ name: devices[i].name,
+                            		       object: switchDev.create(telldus,devices[i])});
+                            break;
+                    }
+                };
+            }
         });
     };
 	
