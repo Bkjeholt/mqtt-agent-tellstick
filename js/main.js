@@ -23,7 +23,7 @@
  *************************************************************************/
 
 var agent = require('./Classes/agentBody');
-var http = require('./classes/healthCheck.js');
+var http = require('./Classes/healthCheck.js');
 
 
 var configInfo = { agent: {
