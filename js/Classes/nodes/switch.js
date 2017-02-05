@@ -1,13 +1,13 @@
 /************************************************************************
  Product    : Home information and control
- Date       : 2017-01-30
+ Date       : 2017-02-05
  Copyright  : Copyright (C) 2017 Kjeholt Engineering. All rights reserved.
  Contact    : dev@kjeholt.se
  Url        : http://www-dev.kjeholt.se
  Licence    : ---
  ---------------------------------------------------------
  File       : mqtt-agent-ovpn/nodes/switch.js
- Version    : 0.1.1
+ Version    : 0.1.2
  Author     : Bjorn Kjeholt
  ---------------------------------------------------------
 
@@ -35,26 +35,26 @@ var switchDev = function(tdAccess,deviceInfo) {
     this.setDevData = function(value,noOfRepeats,callback) {
          if (noOfRepeats > 0) {
              if (value > 0) {
-                 td.turnOn(self.devInfo.id,function(err) {
+                 td.turnOn(devInfo.id,function(err) {
                          if (! err) {
                              self.setDevData(value,noOfRepeats-1,callback);
                          } else {
-                             callback({error: "Fault during switch on device no=" + self.devInfo.id,
-                                       info: {dev_id: self.devInfo.id,
-                                              dev_info: self.devInfo,
+                             callback({error: "Fault during switch on device no=" + devInfo.id,
+                                       info: {dev_id: devInfo.id,
+                                              dev_info: devInfo,
                                               dev_value: value,
                                               repeats: noOfRepeats,
                                               response: err }});
                          }
                      });
              } else {
-                 td.turnOff(self.devInfo.id,function(err) {
+                 td.turnOff(devInfo.id,function(err) {
                          if (! err) {
                              self.setDevData(value,noOfRepeats-1,callback);
                          } else {
-                             callback({error: "Fault during switch off device no=" + self.devInfo.id,
-                                       info: {dev_id: self.devInfo.id,
-                                              dev_info: self.devInfo,
+                             callback({error: "Fault during switch off device no=" + devInfo.id,
+                                       info: {dev_id: devInfo.id,
+                                              dev_info: devInfo,
                                               dev_value: value,
                                               repeats: noOfRepeats,
                                               response: err }});
@@ -67,8 +67,8 @@ var switchDev = function(tdAccess,deviceInfo) {
     };
      
     this.getMqttMessages = function(callback) {
-         nodeBasics.generateMqttInfoMessages(self.devInfo,callback);
-         nodeBasics.generateMqttDataMessages(self.devInfo, callback);
+         nodeBasics.generateMqttInfoMessages(devInfo,callback);
+         nodeBasics.generateMqttDataMessages(devInfo, callback);
       
      };
  };
