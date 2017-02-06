@@ -65,9 +65,12 @@ RUN echo "Install Homebridge for tellstick" && \
     npm install -g --unsafe-perm homebridge && \
     npm install -g homebridge-telldus-tdtool
 
+RUN mkdir -p /usr/src/app/Scripts
+
 COPY homebridge /root/.homebridge 
 COPY package.json package.json
 COPY js /usr/src/app/js
+COPY Scripts /usr/src/app/Scripts
 COPY Configs /etc
 
 
