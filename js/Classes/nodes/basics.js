@@ -20,7 +20,7 @@ exports.generateMqttInfoMessages = function(devInfo, callback) {
                 node: devInfo.name },
               { time: utc,
                 date: new Date(),
-                name: self.devInfo.name,
+                name: devInfo.name,
                 rev: "1.0.0",
                 type: "TellstickDevice" } );
                                           
