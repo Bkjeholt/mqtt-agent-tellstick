@@ -28,6 +28,8 @@ docker run -d \
            --restart="always" \
            --env MQTT_IP_ADDR="192.168.1.10" \
            --env MQTT_PORT_NO=1883 \
+           -- port 5353:5353 \
+           --port 51826:51826 \
            --privileged \
            --device /dev/bus/usb:/dev/bus/usb \
            --name $DOCKER_CONTAINER_NAME \
