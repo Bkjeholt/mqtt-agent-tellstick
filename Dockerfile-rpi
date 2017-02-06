@@ -75,6 +75,7 @@ COPY Configs /etc
 
 
 RUN chmod 755 Scripts/* && \
+    ls -lR Scripts/* && \
     npm install
 
 

@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name" : "mqtt-agent-tellstick",
   "version" : "0.1.1",
   "main" : "./js/main.js",
@@ -27,25 +26,3 @@
   "bugs" : {
     "url" : "http://github.com/bkjeholt/mqtt-agent-tellstick/issues"
   }
-=======
-    "name": "mqtt-agent-tellstick",
-    "description": "",
-    "version": "0.0.1",
-    "main": "./mqtt-agent-tellstick.js",
-    "author": {
-        "name": "Björn Kjeholt",
-        "email": "dev@kjeholt.se"
-    },
-    "keywords": [],
-    "licenses": {
-        "type": "none"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/bkjeholt/mqtt-agent-tellstick.git"
-    },
-    "bugs": {
-        "url": "http://github.com/bkjeholt/mqtt-agent-tellstick/issues"
-    }
->>>>>>> 0.1
-}
