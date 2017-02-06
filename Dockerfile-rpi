@@ -24,6 +24,8 @@ RUN apt-get update && \
                        build-essential \
                        libconfuse-dev \
                        libftdi-dev \
+                       libavahi-compat-libdnssd-dev \
+                       git \
                        help2man && \
     apt-get clean 
 
