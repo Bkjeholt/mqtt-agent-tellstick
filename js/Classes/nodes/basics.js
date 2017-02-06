@@ -66,5 +66,5 @@ exports.generateMqttDataMessages = function(devInfo, devData, callback) {
                 device: "config" },
               { time: utc,
                 date: new Date(),
-                data: JSON.stringify(devInfo) } );
+                data: JSON.stringify(devData) } );
 };

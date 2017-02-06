@@ -68,7 +68,7 @@ var switchDev = function(tdAccess,deviceInfo) {
      
     this.getMqttMessages = function(callback) {
          nodeBasics.generateMqttInfoMessages(devInfo,callback);
-         nodeBasics.generateMqttDataMessages(devInfo, callback);
+         nodeBasics.generateMqttDataMessages(devInfo,devInfo,callback);
       
      };
  };
