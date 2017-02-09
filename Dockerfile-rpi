@@ -61,13 +61,13 @@ WORKDIR /usr/src/app
 #     cat package.json && \
 #     echo "----------------"
 
-RUN echo "Install Homebridge for tellstick" && \
-    npm install -g --unsafe-perm homebridge && \
-    npm install -g homebridge-telldus-tdtool
+# RUN echo "Install Homebridge for tellstick" && \
+#     npm install -g --unsafe-perm homebridge && \
+#     npm install -g homebridge-telldus-tdtool
 
 RUN mkdir -p /usr/src/app/Scripts
 
-COPY homebridge /root/.homebridge 
+# COPY homebridge /root/.homebridge 
 COPY package.json package.json
 COPY js /usr/src/app/js
 COPY Scripts /usr/src/app/Scripts
@@ -91,7 +91,7 @@ ENV DOCKER_IMAGE_TAG ${DOCKER_IMAGE_TAG:-UnknownRevision}
 #-------------------------------------------------------------------
 
 EXPOSE 3000
-EXPOSE 5353 51826
+# EXPOSE 5353 51826
 
 #-------------------------------------------------------------------
 # Check for healthy status
@@ -101,3 +101,4 @@ HEALTHCHECK CMD curl --fail http://127.0.0.1:3000/ || exit 1
 
 # CMD [ "npm", "start" ]
 CMD Scripts/execute.sh
+s
