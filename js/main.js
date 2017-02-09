@@ -49,7 +49,7 @@ var configInfo = { agent: {
                                                     latest_status_time: (Math.floor((new Date())/1000)),
                                                     timeout: 120 }, // seconds
                          subscriptions: [
-                               "data/set/" + process.env.npm_package_name + "/#"
+                               "data/set/" + process.env.DOCKER_CONTAINER_NAME + "/#"
                             ]
                       },
                    node: {

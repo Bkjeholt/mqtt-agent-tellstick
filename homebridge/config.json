@@ -1,0 +1,12 @@
+{
+  "bridge": {
+    "name": "Homebridge",
+    "username": "CC:22:3F:C3:CE:30",
+    "port": 51826,
+    "pin": "174-32-034"
+  },
+  "platforms": [{
+    "platform" : "Telldus-TD-Tool",
+    "name" : "Telldus-TD-Tool"
+  }]
+}

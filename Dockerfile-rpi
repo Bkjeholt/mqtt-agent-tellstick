@@ -24,6 +24,8 @@ RUN apt-get update && \
                        build-essential \
                        libconfuse-dev \
                        libftdi-dev \
+                       libavahi-compat-libdnssd-dev \
+                       git \
                        help2man && \
     apt-get clean 
 
@@ -39,28 +41,43 @@ RUN apt-get update && \
     apt-get --compile source telldus-core && \
     dpkg --install *.deb
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir -p /usr/src/app/js && \
+    mkdir -p /usr/src/homebridge && \
+    mkdir -p /root/.homebridge
 
-# Bundle app source
-COPY . /usr/src/app
-COPY Configs /etc
+WORKDIR /usr/src/app
 
 # Install app dependencies
 
-RUN \
-    mv package.json package-original.json && \
-    sed 's/TestWrapper/js\/main/g' package-original.json > package.json && \
-    rm -f package-*.json build*.sh run*.sh *.log TestWrapper.js && \
-    rm -rf node_modules nbproject && \
-    chmod 755 Scripts/*.sh && \
-    echo "----------------" && \
-    ls -laR && \
-    echo "----------------" && \
-    cat package.json && \
-    echo "----------------"
+# RUN \
+#     mv package.json package-original.json && \
+#     sed 's/TestWrapper/js\/main/g' package-original.json > package.json && \
+#     rm -f package-*.json build*.sh run*.sh *.log TestWrapper.js && \
+#     rm -rf node_modules nbproject && \
+#     chmod 755 Scripts/*.sh && \
+#     echo "----------------" && \
+#     ls -laR && \
+#     echo "----------------" && \
+#     cat package.json && \
+#     echo "----------------"
 
-RUN npm install
+# RUN echo "Install Homebridge for tellstick" && \
+#     npm install -g --unsafe-perm homebridge && \
+#     npm install -g homebridge-telldus-tdtool
+
+RUN mkdir -p /usr/src/app/Scripts
+
+# COPY homebridge /root/.homebridge 
+COPY package.json package.json
+COPY js /usr/src/app/js
+COPY Scripts /usr/src/app/Scripts
+COPY Configs /etc
+
+
+RUN chmod 755 Scripts/* && \
+    ls -lR Scripts/* && \
+    npm install
+
 
 ARG DOCKER_IMAGE_NAME
 ARG DOCKER_IMAGE_TAG
@@ -74,6 +91,7 @@ ENV DOCKER_IMAGE_TAG ${DOCKER_IMAGE_TAG:-UnknownRevision}
 #-------------------------------------------------------------------
 
 EXPOSE 3000
+# EXPOSE 5353 51826
 
 #-------------------------------------------------------------------
 # Check for healthy status
@@ -83,3 +101,4 @@ HEALTHCHECK CMD curl --fail http://127.0.0.1:3000/ || exit 1
 
 # CMD [ "npm", "start" ]
 CMD Scripts/execute.sh
+s

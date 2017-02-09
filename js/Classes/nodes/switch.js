@@ -34,6 +34,8 @@ var switchDev = function(tdAccess,deviceInfo) {
      */
     this.setDevData = function(value,noOfRepeats,callback) {
          if (noOfRepeats > 0) {
+             console.log("Write to telldusd: " + value + "config:" + JSON.stringify(devInfo));
+             
              if (value > 0) {
                  td.turnOn(devInfo.id,function(err) {
                          if (! err) {
@@ -68,7 +70,7 @@ var switchDev = function(tdAccess,deviceInfo) {
      
     this.getMqttMessages = function(callback) {
          nodeBasics.generateMqttInfoMessages(devInfo,callback);
-         nodeBasics.generateMqttDataMessages(devInfo, callback);
+         nodeBasics.generateMqttDataMessages(devInfo,devInfo,callback);
       
      };
  };

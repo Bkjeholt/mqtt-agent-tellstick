@@ -97,6 +97,7 @@ var nodeTellstick = function (ci) {
                 
                 
                 if (nodePtr !== null) {
+                    console.log("Set device data: Dev-name: " + self.deviceList[nodePtr].name + " With value: " + deviceValue);
                     self.deviceList[nodePtr].object.setDevData(deviceValue,5,function(err) {
                             if (err) {
                                 console.log("NodeTelstick: SetDeviceData err=",err);

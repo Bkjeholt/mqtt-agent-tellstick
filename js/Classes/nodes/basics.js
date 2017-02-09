@@ -20,7 +20,7 @@ exports.generateMqttInfoMessages = function(devInfo, callback) {
                 node: devInfo.name },
               { time: utc,
                 date: new Date(),
-                name: self.devInfo.name,
+                name: devInfo.name,
                 rev: "1.0.0",
                 type: "TellstickDevice" } );
                                           
@@ -66,5 +66,5 @@ exports.generateMqttDataMessages = function(devInfo, devData, callback) {
                 device: "config" },
               { time: utc,
                 date: new Date(),
-                data: JSON.stringify(devInfo) } );
+                data: JSON.stringify(devData) } );
 };
