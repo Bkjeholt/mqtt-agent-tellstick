@@ -1,104 +1,20 @@
 # ************************************************************************
 # Product    : Home information and control
-# Date       : 2016-12-28
-# Copyright  : Copyright (C) 2016 Kjeholt Engineering. All rights reserved.
+# Date       : 2017-02-10
+# Copyright  : Copyright (C) 2016-2017 Kjeholt Engineering. All rights reserved.
 # Contact    : dev@kjeholt.se
 # Url        : http://www-dev.kjeholt.se
 # Licence    : ---
 # -------------------------------------------------------------------------
 # File       : mqtt-agent-tellstick/Dockerfile-rpi
-# Version    : 1.0.1
+# Version    : 1.1.0
 # Author     : Bjorn Kjeholt
 # *************************************************************************
  
-FROM hypriot/rpi-node:latest
-# FROM bkjeholt/node-js-with-tellstick:latest
-
-MAINTAINER Björn Kjeholt <dev@kjeholt.se>
-
-RUN apt-get update && \
-    apt-get install -y vim \
-                       wget \
-                       gcc \
-                       cmake \
-                       build-essential \
-                       libconfuse-dev \
-                       libftdi-dev \
-                       libavahi-compat-libdnssd-dev \
-                       git \
-                       help2man && \
-    apt-get clean 
-
-# Add Telldus repository
-RUN echo "deb-src http://download.telldus.com/debian/ stable main" >> /etc/apt/sources.list.d/telldus.list && \
-    wget http://download.telldus.se/debian/telldus-public.key && \
-    apt-key add telldus-public.key && \
-    rm telldus-public.key
-
-# Install dependencies. Compile and install telldusd
-RUN apt-get update && \
-    apt-get build-dep -y telldus-core && \
-    apt-get --compile source telldus-core && \
-    dpkg --install *.deb
-
-RUN mkdir -p /usr/src/app/js && \
-    mkdir -p /usr/src/homebridge && \
-    mkdir -p /root/.homebridge
-
-WORKDIR /usr/src/app
-
-# Install app dependencies
-
-# RUN \
-#     mv package.json package-original.json && \
-#     sed 's/TestWrapper/js\/main/g' package-original.json > package.json && \
-#     rm -f package-*.json build*.sh run*.sh *.log TestWrapper.js && \
-#     rm -rf node_modules nbproject && \
-#     chmod 755 Scripts/*.sh && \
-#     echo "----------------" && \
-#     ls -laR && \
-#     echo "----------------" && \
-#     cat package.json && \
-#     echo "----------------"
-
-# RUN echo "Install Homebridge for tellstick" && \
-#     npm install -g --unsafe-perm homebridge && \
-#     npm install -g homebridge-telldus-tdtool
-
-RUN mkdir -p /usr/src/app/Scripts
-
-# COPY homebridge /root/.homebridge 
-COPY package.json package.json
-COPY js /usr/src/app/js
-COPY Scripts /usr/src/app/Scripts
-COPY Configs /etc
-
-
-RUN chmod 755 Scripts/* && \
-    ls -lR Scripts/* && \
-    npm install
-
+FROM bkjeholt/base-nodejs-tellstick:dev-rpi
 
 ARG DOCKER_IMAGE_NAME
 ARG DOCKER_IMAGE_TAG
 
 ENV DOCKER_IMAGE_NAME ${DOCKER_IMAGE_NAME:-UnknownName}
 ENV DOCKER_IMAGE_TAG ${DOCKER_IMAGE_TAG:-UnknownRevision}
-
-
-#-------------------------------------------------------------------
-# Expose port number 3000 to be used for health check status
-#-------------------------------------------------------------------
-
-EXPOSE 3000
-# EXPOSE 5353 51826
-
-#-------------------------------------------------------------------
-# Check for healthy status
-#-------------------------------------------------------------------
-
-HEALTHCHECK CMD curl --fail http://127.0.0.1:3000/ || exit 1
-
-# CMD [ "npm", "start" ]
-CMD Scripts/execute.sh
-s
